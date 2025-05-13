@@ -1,20 +1,31 @@
-from fastapi import FastAPI
-from typing import Optional
+from fastapi import FastAPI, Body
+from fastapi.middleware.cors import CORSMiddleware
 from config import gemini_client, custom_search_api_key, custom_search_id
-from google.genai import types
-from functions import store_new_chat_contexts_to_db, append_chat_context, generate_simplified_context, update_simplified_context
 from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 import requests
 import json
 import re
+from pydantic import BaseModel
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ['http://localhost:5173', 'https://travel-destination-frontend-two.vercel.app/'],
+    allow_credentials = True,
+    allow_methods = ['*'],
+    allow_headers = ['*']
+)
 
 @app.get("/")
 def read_root():
     return {"message": "Hello! This is a FastAPI server for an AI chat bot that assists you on your next travel destination using Google Gemini."}
 
+class query_model(BaseModel):
+    query: str
+
 def image_search(query: str):
+    # query = user_query.query
     search_url = "https://www.googleapis.com/customsearch/v1"
     params = {
         'key': custom_search_api_key,
@@ -39,8 +50,11 @@ def image_search(query: str):
         }
 
 @app.post("/chat")
-def chat_with_bot(query: str):
-    
+def chat_with_bot(query: str = Body(
+        description="This is the user's prompt regarding his/her next travel destination preferences."
+)):
+    # query = user_query.query
+
     print(query)
 
     query_base = [
