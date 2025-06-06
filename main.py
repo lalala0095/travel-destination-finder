@@ -61,7 +61,7 @@ def chat_with_bot(query: str = Body(
         "You are a helpful travel assistant.",
         "The user wants you to return travel destinations base on his/her preferences.",
         "Use the Google Search tool for this to return the latest and most recommended destinations.",
-        "Return a maximum of 5 destinations.",
+        "Return a maximum of 10 destinations.",
         """Do not return any explanations or extra texts. Just return the json response. Use the following json format.
         product = {
             "name": "Sample Name",
